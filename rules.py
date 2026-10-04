@@ -5,7 +5,7 @@ from datetime import date, datetime, time
 from openpyxl.utils.datetime import to_excel
 
 GREEN, YELLOW, RED, CLEARED = 'GREEN', 'YELLOW', 'RED', 'CLEARED'
-SUB_FIRST, SUB_LAST = 5, 304          # Submissions rows
+SUB_FIRST, SUB_LAST = 5, 204          # Submissions rows
 BASE_FIRST, BASE_LAST = 20, 49        # Baseline requirement rows
 DEFAULT_THRESHOLD = 0.8
 

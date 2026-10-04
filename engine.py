@@ -20,7 +20,7 @@ import run
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE = os.path.join(HERE, 'P01113_template.xlsx')
-MAX_SUPPLIERS, MAX_ITEMS, MAX_LINES = 10, 3, 30
+MAX_SUPPLIERS, MAX_ITEMS, MAX_LINES = 8, 3, 30
 MAX_API_PAGES = 100
 DECLARATIONS = extractor.DECLARATIONS
 CLASSES = ['Mandatory', 'Evaluated', 'Informational']
@@ -160,14 +160,12 @@ def extract_all(files, baseline, backend, api_key=None, progress=None):
 
     def one(job):
         _, s, path, n = job
-        if backend == 'gemini':
-            return extractor.extract_quotation_gemini(api_key, baseline, s, path, [1, n])
         if backend == 'api':
             return extractor.extract_quotation(client, baseline, s, path, [1, n])
         return extractor.extract_with_claude_code(baseline, s, path, [1, n])
 
     results, done = {}, 0
-    workers = 3 if backend == 'api' else 1          # gemini free tier: one at a time
+    workers = 3 if backend == 'api' else 1
     with ThreadPoolExecutor(max_workers=workers) as ex:
         futs = {ex.submit(one, j): j for j in jobs}
         for f in as_completed(futs):
@@ -300,7 +298,7 @@ def prepare_template(baseline, template=TEMPLATE):
     for c in run.SUP_COLS:
         cm[f'{c}4'].value = None
     ev = wb['Evaluation']
-    for r in range(9, 19):
+    for r in range(9, 17):
         for col in 'CDEGL':
             ev[f'{col}{r}'].value = None
     ex = wb['Exceptions']

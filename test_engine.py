@@ -37,24 +37,3 @@ p = os.path.join(tempfile.mkdtemp(), 'o.xlsx'); open(p, 'wb').write(data)
 subprocess.run([sys.executable, '/mnt/skills/public/xlsx/scripts/recalc.py', p, '120'], check=True)
 print(subprocess.run([sys.executable, 'run.py', 'check', '--workbook', p], capture_output=True, text=True).stdout[-1500:])
 print('OK')
-
-# ---- 10 suppliers ----
-import copy
-docs10 = []
-for i in range(10):
-    d = copy.deepcopy(docs[i % len(docs)]); d['supplier'] = f'Supplier {i + 1}'; docs10.append(d)
-rows10 = engine.make_rows(docs10, bl)
-rates10 = {d['supplier']: {r['item']: r['rate'] for r in d['rates']} for d in docs10}
-data = engine.build_workbook(bl, docs10, rows10, rates10, {}, {})
-p = os.path.join(tempfile.mkdtemp(), 'o10.xlsx'); open(p, 'wb').write(data)
-subprocess.run([sys.executable, '/mnt/skills/public/xlsx/scripts/recalc.py', p, '120'], check=True)
-wb = load_workbook(p, data_only=True)
-cm = wb['Compliance Matrix']
-assert [cm.cell(4, c).value for c in range(5, 15)] == [f'Supplier {i + 1}' for i in range(10)]
-assert cm['M41'].value and cm['N41'].value and wb['Evaluation']['A18'].value == 'Supplier 10'
-res10, _ = engine.compute(rows10, bl)
-for i in range(10):
-    s = f'Supplier {i + 1}'
-    col = 5 + i
-    assert cm.cell(38, col).value == res10[s]['red'] and cm.cell(39, col).value == res10[s]['yellow'], s
-print('10 suppliers OK')

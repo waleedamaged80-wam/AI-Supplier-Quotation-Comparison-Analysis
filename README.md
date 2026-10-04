@@ -44,21 +44,19 @@ Optional pay-per-use mode: add `--backend api` and set ANTHROPIC_API_KEY.
 - Bank details and IBANs on quotation pages are sent to the API as part of the PDF. Redaction is not built yet.
 - Extraction quality on the 7 binder PDFs has not been measured yet; the test suite uses fixtures and a mocked API response.
 
-## Streamlit app (upload RFQ, upload up to 10 quotations, compare, download Excel)
+## Streamlit app (upload up to 8 PDFs, compare, download Excel)
 
 Run on your PC (uses your Claude subscription through Claude Code, no API credits):
 
     pip install -r requirements.txt
     streamlit run app.py
 
-Open http://localhost:8501. Steps: 1 upload the RFQ / technical spec (PDF, Word, Excel, text) and press Extract baseline, then check and edit the tables (or pick the P01113 sample / type manually), 2 upload PDFs and name suppliers, 3 Run comparison,
+Open http://localhost:8501. Steps: 1 check baseline, 2 upload PDFs and name suppliers, 3 Run comparison,
 4 correct extracted values (tick Reviewed), 5 exceptions (Accepted + approver clears a line), 6 rates, then Build Excel and Download.
 
 Online (a link others can open): put these files on GitHub and deploy on Streamlit Community Cloud
 (share.streamlit.io, main file `app.py`). Add secrets `ANTHROPIC_API_KEY` and `APP_PASSWORD`
 (see `.streamlit/secrets.toml.example`). Online use needs an API key: a personal subscription cannot be used by a hosted app.
 Quotations (incl. bank details) are sent to Claude, so always set APP_PASSWORD.
-Limits: 10 suppliers, 3 BOQ items, 30 lines, one PDF per supplier, 100 pages per PDF on the API.
+Limits: 8 suppliers, 3 BOQ items, 30 lines, one PDF per supplier, 100 pages per PDF on the API.
 Tests: `python test_engine.py`, `python test_app.py`, `python test_pipeline.py`.
-
-Tests also: `python test_baseline.py`. Template is extended to 10 suppliers / 300 submission rows (extend_template.py, extend_template2.py were one-off).
