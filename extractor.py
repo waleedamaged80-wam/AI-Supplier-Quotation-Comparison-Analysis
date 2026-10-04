@@ -195,3 +195,41 @@ def extract_with_claude_code(baseline, supplier, pdf_path, pages, retries=1, tim
             if attempt == retries:
                 raise
             time.sleep(3)
+
+
+# ---------- Google Gemini backend: free tier key from aistudio.google.com ----------
+GEMINI_MODEL = os.environ.get('RFQ_GEMINI_MODEL', 'gemini-2.5-flash')
+
+_QUOTE_SHAPE = ('Return ONE JSON object only, no markdown, in this shape: {"supplier_name": str, "quotation_date": str|null, '
+                '"lines": [{"line": int, "value": str|number|null, "declaration": one of ' + str(DECLARATIONS) +
+                ', "confidence": number 0-1, "source_page": int|null, "source_text": str, "note": str}], '
+                '"rates": [{"item": int, "rate": number|null}]}')
+
+
+def gemini_json(api_key, system, prompt, pdf_bytes=None, retries=3):
+    """One Gemini call that must return JSON. Retries on rate limits (free tier is slow but free)."""
+    from google import genai
+    from google.genai import types
+    client = genai.Client(api_key=api_key)
+    parts = []
+    if pdf_bytes is not None:
+        parts.append(types.Part.from_bytes(data=pdf_bytes, mime_type='application/pdf'))
+    parts.append(prompt)
+    cfg = types.GenerateContentConfig(system_instruction=system, response_mime_type='application/json',
+                                      temperature=0)
+    for attempt in range(retries + 1):
+        try:
+            resp = client.models.generate_content(model=GEMINI_MODEL, contents=parts, config=cfg)
+            return _json_from_text(resp.text)
+        except Exception as e:
+            msg = str(e)
+            if attempt == retries:
+                raise
+            time.sleep(20 if ('429' in msg or 'RESOURCE_EXHAUSTED' in msg) else 3)
+
+
+def extract_quotation_gemini(api_key, baseline, supplier, pdf_path, pages, call=None):
+    call = call or gemini_json
+    system = SYSTEM.replace('Return everything through the record_quotation tool.', _QUOTE_SHAPE)
+    raw = call(api_key, system, build_prompt(baseline, supplier), slice_pdf(pdf_path, pages[0], pages[1]))
+    return normalise(raw, baseline, supplier, pages)

@@ -50,16 +50,21 @@ ss.setdefault("baseline", None)
 with st.sidebar:
     st.header("Settings")
     has_cli = shutil.which("claude") is not None
-    opts = (["claude-code"] if has_cli else []) + ["api"]
-    labels = {"claude-code": "Claude subscription (Claude Code, this PC only)", "api": "Anthropic API key (pay per use)"}
+    opts = ["gemini"] + (["claude-code"] if has_cli else []) + ["api"]
+    labels = {"gemini": "Google Gemini (free key)", "claude-code": "Claude subscription (Claude Code, this PC only)",
+              "api": "Anthropic API key (pay per use)"}
     backend = st.radio("Extraction engine", opts, format_func=labels.get)
     api_key = None
-    if backend == "api":
-        api_key = secret("ANTHROPIC_API_KEY")
+    if backend in ("api", "gemini"):
+        kname = "GEMINI_API_KEY" if backend == "gemini" else "ANTHROPIC_API_KEY"
+        api_key = secret(kname)
         if not api_key:
-            api_key = st.text_input("Anthropic API key", type="password") or None
+            label = "Gemini API key (free at aistudio.google.com/apikey)" if backend == "gemini" else "Anthropic API key"
+            api_key = st.text_input(label, type="password") or None
         else:
             st.caption("API key loaded from secrets.")
+        if backend == "gemini":
+            st.caption("Free tier: slow (one quotation at a time) and Google may use the content to improve its products. Do not use for confidential bids.")
     elif not has_cli:
         st.caption("Claude Code not found on this machine.")
     threshold = st.slider("Review threshold (AI confidence)", 0.5, 1.0, 0.8, 0.05,
@@ -80,9 +85,9 @@ ss.setdefault("bl_ver", 0)
 if src == SRC[0]:
     rfq_file = st.file_uploader("RFQ or technical specification (PDF, Word, Excel or text)",
                                 type=["pdf", "docx", "xlsx", "txt", "csv", "md"], key="rfq_file")
-    no_key = backend == "api" and not api_key
+    no_key = backend in ("api", "gemini") and not api_key
     if no_key:
-        st.warning("Enter an Anthropic API key in the sidebar (or choose the Claude subscription option).")
+        st.warning("Enter an API key in the sidebar.")
     if st.button("Extract baseline", disabled=rfq_file is None or no_key):
         with st.spinner("Reading the RFQ... (about a minute)"):
             try:
@@ -147,9 +152,9 @@ if files:
 
 # ---------- 3. run ----------
 st.subheader("3. Run")
-need_key = backend == "api" and not api_key
+need_key = backend in ("api", "gemini") and not api_key
 if need_key:
-    st.warning("Enter an Anthropic API key in the sidebar (or choose the Claude subscription option).")
+    st.warning("Enter an API key in the sidebar.")
 go = st.button("Run comparison", type="primary", disabled=bool(errs) or not files or need_key)
 if go:
     bar = st.progress(0.0, text="Reading quotations...")
