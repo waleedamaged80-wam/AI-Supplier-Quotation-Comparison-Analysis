@@ -160,12 +160,14 @@ def extract_all(files, baseline, backend, api_key=None, progress=None):
 
     def one(job):
         _, s, path, n = job
+        if backend == 'gemini':
+            return extractor.extract_quotation_gemini(api_key, baseline, s, path, [1, n])
         if backend == 'api':
             return extractor.extract_quotation(client, baseline, s, path, [1, n])
         return extractor.extract_with_claude_code(baseline, s, path, [1, n])
 
     results, done = {}, 0
-    workers = 3 if backend == 'api' else 1
+    workers = 3 if backend == 'api' else 1          # gemini free tier: one at a time
     with ThreadPoolExecutor(max_workers=workers) as ex:
         futs = {ex.submit(one, j): j for j in jobs}
         for f in as_completed(futs):

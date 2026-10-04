@@ -154,8 +154,29 @@ def extract_cli(name, data, retries=1, timeout=900):
 
 def extract_baseline(name, data, backend, api_key=None):
     """Returns (rfq_id, title, boq_rows, line_rows)."""
+    if backend == 'gemini':
+        return extract_gemini(api_key, name, data)
     if backend == 'api':
         import anthropic
         client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
         return extract_api(client, name, data)
     return extract_cli(name, data)
+
+
+# ---------- Google Gemini backend ----------
+_SHAPE = ('Return ONE JSON object only, no markdown: {"rfq_id": str|null, "title": str|null, '
+          '"boq": [{"item": int, "description": str, "unit": str, "qty": number|null}], '
+          '"lines": [{"parameter": str, "cls": "Mandatory"|"Evaluated"|"Informational", '
+          '"rule": "Min"|"Max"|"Range"|"Exact", "target": str|number|null, "tolerance": number|null, '
+          '"fail": "RED"|"YELLOW", "notes": str}]}')
+
+
+def extract_gemini(api_key, name, data, call=None):
+    call = call or extractor.gemini_json
+    text = to_text(name, data)
+    system = SYSTEM.replace('Return everything through the record_baseline tool.', _SHAPE)
+    if text is None:
+        raw = call(api_key, system, _prompt_head(), data)
+    else:
+        raw = call(api_key, system, f'<rfq_document name="{name}">\n{text[:150000]}\n</rfq_document>\n{_prompt_head()}')
+    return normalise(raw)
