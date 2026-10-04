@@ -34,3 +34,19 @@ os.environ['PATH'] = d + os.pathsep + os.environ['PATH']
 r = be.extract_baseline('rfq.pdf', b'%PDF-1.4 fake', 'claude-code')
 assert r[0] == 'P09999' and len(r[3]) == 3
 print('OK')
+
+# ---- Gemini path with a mocked call ----
+QUOTE = {'supplier_name': 'X', 'lines': [{'line': 1, 'value': 'Yes', 'declaration': 'Fully Compliant', 'confidence': 0.9}], 'rates': []}
+import extractor, rules
+from openpyxl import load_workbook
+calls = []
+def fake(key, system, prompt, pdf=None):
+    calls.append((key, pdf is not None)); return RAW if 'record_baseline' not in system and 'rfq_id' in system else QUOTE
+r = be.extract_gemini('K', 'rfq.pdf', b'%PDF', call=fake); assert r[0] == 'P09999' and calls[-1] == ('K', True)
+r = be.extract_gemini('K', 'rfq.txt', b'text', call=fake); assert calls[-1] == ('K', False)
+bl = rules.load_baseline(load_workbook(engine.TEMPLATE))
+import pypdf, io as _io
+w = pypdf.PdfWriter(); w.add_blank_page(100, 100); p = os.path.join(tempfile.mkdtemp(), 'q.pdf'); w.write(open(p, 'wb'))
+d = extractor.extract_quotation_gemini('K', bl, 'Sup', p, [1, 1], call=fake)
+assert d['supplier'] == 'Sup' and len(d['lines']) == len(bl['lines']) and d['lines'][0]['value'] == 'Yes'
+print('gemini mock OK')
