@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 from openpyxl import load_workbook
 
+import baseline_extractor
 import engine
 import rules
 
@@ -49,21 +50,26 @@ ss.setdefault("baseline", None)
 with st.sidebar:
     st.header("Settings")
     has_cli = shutil.which("claude") is not None
-    opts = (["claude-code"] if has_cli else []) + ["api"]
-    labels = {"claude-code": "Claude subscription (Claude Code, this PC only)", "api": "Anthropic API key (pay per use)"}
+    opts = ["gemini"] + (["claude-code"] if has_cli else []) + ["api"]
+    labels = {"gemini": "Google Gemini (free key)", "claude-code": "Claude subscription (Claude Code, this PC only)",
+              "api": "Anthropic API key (pay per use)"}
     backend = st.radio("Extraction engine", opts, format_func=labels.get)
     api_key = None
-    if backend == "api":
-        api_key = secret("ANTHROPIC_API_KEY")
+    if backend in ("api", "gemini"):
+        kname = "GEMINI_API_KEY" if backend == "gemini" else "ANTHROPIC_API_KEY"
+        api_key = secret(kname)
         if not api_key:
-            api_key = st.text_input("Anthropic API key", type="password") or None
+            label = "Gemini API key (free at aistudio.google.com/apikey)" if backend == "gemini" else "Anthropic API key"
+            api_key = st.text_input(label, type="password") or None
         else:
             st.caption("API key loaded from secrets.")
+        if backend == "gemini":
+            st.caption("Free tier: slow (one quotation at a time) and Google may use the content to improve its products. Do not use for confidential bids.")
     elif not has_cli:
         st.caption("Claude Code not found on this machine.")
     threshold = st.slider("Review threshold (AI confidence)", 0.5, 1.0, 0.8, 0.05,
                           help="Extracted values below this confidence are shown YELLOW until you tick Reviewed.")
-    st.caption("Up to 8 suppliers, 3 BOQ items, 30 requirement lines. Quotation PDFs are sent to Claude for reading.")
+    st.caption("Up to 10 suppliers, 3 BOQ items, 30 requirement lines. Quotation PDFs are sent to Claude for reading.")
 
 st.title("Supplier quotation comparison")
 st.caption("Compare like-for-like before comparing price. AI reads, rules decide, exceptions need a named approver.")
@@ -72,20 +78,51 @@ st.caption("Compare like-for-like before comparing price. AI reads, rules decide
 st.subheader("1. RFQ baseline")
 tpl = rules.load_baseline(load_workbook(engine.TEMPLATE))
 tboq, tlines = engine.baseline_tables(tpl)
-empty = st.checkbox("Start with an empty baseline (new RFQ)")
+SRC = ["Upload RFQ / technical specification (AI extracts)", "P01113 sample", "Type it manually"]
+src = st.radio("Baseline source", SRC, horizontal=True)
+ss.setdefault("bl", None)
+ss.setdefault("bl_ver", 0)
+if src == SRC[0]:
+    rfq_file = st.file_uploader("RFQ and/or technical specifications (PDF, Word, Excel or text). "
+                                "Upload one file per item (windows, doors, skylight...) or one file for everything.",
+                                type=["pdf", "docx", "xlsx", "txt", "csv", "md"], key="rfq_file",
+                                accept_multiple_files=True)
+    no_key = backend in ("api", "gemini") and not api_key
+    if no_key:
+        st.warning("Enter an API key in the sidebar.")
+    if st.button("Extract baseline", disabled=not rfq_file or no_key):
+        with st.spinner("Reading the RFQ... (about a minute)"):
+            try:
+                rid, ttl, bq, ln = baseline_extractor.extract_baseline([(f.name, f.getvalue()) for f in rfq_file], backend, api_key)
+                ss.bl = dict(rfq_id=rid, title=ttl, boq=bq, lines=ln)
+                ss.bl_ver += 1
+            except Exception as e:
+                st.error(f"Could not extract the baseline: {str(e)[:300]}")
+    if ss.bl is None:
+        st.info("Upload the RFQ and press Extract baseline. You can edit everything before running the comparison.")
+        st.stop()
+    cur = ss.bl
+    k = f"x{ss.bl_ver}"
+    st.caption("Extracted by AI. Check every line: class, rule and target decide who passes. Edit, add or delete rows freely.")
+elif src == SRC[1]:
+    cur = dict(rfq_id=str(tpl["header"].get("RFQ ID") or ""), title=str(tpl["header"].get("Title") or ""),
+               boq=tboq, lines=tlines)
+    k = "tpl"
+else:
+    cur = dict(rfq_id="", title="", boq=[dict(Item=1, Description="", Unit="", Qty=0)],
+               lines=[{"Line": 1, "Parameter": "", "Class": "Mandatory", "Rule": "Exact", "Target": "",
+                       "Tolerance": None, "Fail result": "RED", "Notes": ""}])
+    k = "man"
 c1, c2 = st.columns([1, 3])
-rfq_id = c1.text_input("RFQ number", "" if empty else str(tpl["header"].get("RFQ ID") or ""))
-title = c2.text_input("Title", "" if empty else str(tpl["header"].get("Title") or ""))
-k = "empty" if empty else "tpl"
-boq_df = pd.DataFrame([dict(Item=1, Description="", Unit="", Qty=0)] if empty else tboq)
-lines_df = pd.DataFrame(
-    [dict(Line=1, Parameter="", Class="Mandatory", Rule="Exact", Target="", Tolerance=None, **{"Fail result": "RED"}, Notes="")]
-    if empty else tlines)
+rfq_id = c1.text_input("RFQ number", cur["rfq_id"], key=f"id_{k}")
+title = c2.text_input("Title", cur["title"], key=f"ti_{k}")
 st.markdown("**BOQ items** (priced items, max 3)")
-boq_ed = st.data_editor(boq_df, num_rows="dynamic", width="stretch", hide_index=True, key=f"boq_{k}")
+boq_ed = st.data_editor(pd.DataFrame(cur["boq"], columns=["Item", "Description", "Unit", "Qty"]), num_rows="dynamic",
+                        width="stretch", hide_index=True, key=f"boq_{k}")
 st.markdown("**Requirement lines** (what every supplier must meet)")
 lines_ed = st.data_editor(
-    lines_df, num_rows="dynamic", width="stretch", hide_index=True, key=f"lines_{k}",
+    pd.DataFrame(cur["lines"], columns=["Line", "Parameter", "Class", "Rule", "Target", "Tolerance", "Fail result", "Notes"]),
+    num_rows="dynamic", width="stretch", hide_index=True, key=f"lines_{k}",
     column_config={
         "Line": st.column_config.NumberColumn(step=1),
         "Class": st.column_config.SelectboxColumn(options=engine.CLASSES, required=True),
@@ -117,9 +154,9 @@ if files:
 
 # ---------- 3. run ----------
 st.subheader("3. Run")
-need_key = backend == "api" and not api_key
+need_key = backend in ("api", "gemini") and not api_key
 if need_key:
-    st.warning("Enter an Anthropic API key in the sidebar (or choose the Claude subscription option).")
+    st.warning("Enter an API key in the sidebar.")
 go = st.button("Run comparison", type="primary", disabled=bool(errs) or not files or need_key)
 if go:
     bar = st.progress(0.0, text="Reading quotations...")

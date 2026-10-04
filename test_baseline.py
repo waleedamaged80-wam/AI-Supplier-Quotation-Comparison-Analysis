@@ -14,7 +14,7 @@ class C:
         def create(**kw):
             assert kw['tool_choice']['name'] == 'record_baseline'
             return types.SimpleNamespace(content=[B])
-rid, ttl, boq, lines = be.extract_api(C, 'rfq.txt', b'Doors 10 m2, min 1.5 mm')
+rid, ttl, boq, lines = be.extract_api(C, [('doors.txt', b'Doors 10 m2, min 1.5 mm'), ('windows.txt', b'x')])
 assert rid == 'P09999' and len(lines) == 3 and lines[2]['Tolerance'] == 0 and lines[2]['Target'] == '1.5'
 bl = engine.make_baseline(rid, ttl, boq, lines)
 assert not engine.validate(bl), engine.validate(bl)
@@ -31,7 +31,7 @@ fake = os.path.join(d, 'claude')
 open(fake, 'w').write('#!/usr/bin/env python3\nimport json,sys\nprint(json.dumps({"is_error":False,"structured_output":%s}))\n' % json.dumps(RAW))
 os.chmod(fake, 0o755)
 os.environ['PATH'] = d + os.pathsep + os.environ['PATH']
-r = be.extract_baseline('rfq.pdf', b'%PDF-1.4 fake', 'claude-code')
+r = be.extract_baseline([('rfq.pdf', b'%PDF-1.4 fake'), ('b.txt', b'y')], 'claude-code')
 assert r[0] == 'P09999' and len(r[3]) == 3
 print('OK')
 
@@ -41,9 +41,9 @@ import extractor, rules
 from openpyxl import load_workbook
 calls = []
 def fake(key, system, prompt, pdf=None):
-    calls.append((key, pdf is not None)); return RAW if 'record_baseline' not in system and 'rfq_id' in system else QUOTE
-r = be.extract_gemini('K', 'rfq.pdf', b'%PDF', call=fake); assert r[0] == 'P09999' and calls[-1] == ('K', True)
-r = be.extract_gemini('K', 'rfq.txt', b'text', call=fake); assert calls[-1] == ('K', False)
+    calls.append((key, bool(pdf))); return RAW if 'record_baseline' not in system and 'rfq_id' in system else QUOTE
+r = be.extract_gemini('K', [('rfq.pdf', b'%PDF')], call=fake); assert r[0] == 'P09999' and calls[-1] == ('K', True)
+r = be.extract_gemini('K', [('rfq.txt', b'text')], call=fake); assert calls[-1] == ('K', False)
 bl = rules.load_baseline(load_workbook(engine.TEMPLATE))
 import pypdf, io as _io
 w = pypdf.PdfWriter(); w.add_blank_page(100, 100); p = os.path.join(tempfile.mkdtemp(), 'q.pdf'); w.write(open(p, 'wb'))

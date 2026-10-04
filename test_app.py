@@ -11,9 +11,10 @@ at.session_state['rows'] = engine.make_rows(docs, bl)
 at.session_state['rates'] = {d['supplier']: {r['item']: r['rate'] for r in d['rates']} for d in docs}
 at.session_state['adj'] = {d['supplier']: 0 for d in docs}
 at.run()
+[r for r in at.radio if 'Baseline' in r.label][0].set_value('P01113 sample').run()
 assert not at.exception, at.exception
 print('tables', len(at.dataframe), 'editors', len(at.get('arrow_data_frame')))
-at.button[-1].click().run()   # Build Excel
+[b for b in at.button if b.label=='Build Excel file'][0].click().run()   # Build Excel
 assert not at.exception, at.exception
 print('xlsx bytes', len(at.session_state['xlsx'] or b''))
 print('OK')

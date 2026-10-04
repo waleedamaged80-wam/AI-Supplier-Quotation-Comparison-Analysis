@@ -12,7 +12,7 @@ import rules
 
 A = 'Arial'
 BLUE, BLACK = Font(name=A, size=10, color='0000FF'), Font(name=A, size=10)
-SUP_COLS = 'EFGHIJKL'                      # Compliance Matrix supplier columns
+SUP_COLS = 'EFGHIJKLMN'                      # Compliance Matrix supplier columns
 
 
 # ---------- workbook prep ----------
@@ -53,8 +53,8 @@ def fix_compat(wb):
     for c in SUP_COLS:
         f = cm[f'{c}5'].value
         if isinstance(f, str) and 'MAXIFS' in f:
-            cm[f'{c}5'] = (f'=IF({c}4="","",IF(COUNTIF(Submissions!$A$5:$A$204,{c}4)=0,"",'
-                           f'SUMPRODUCT(MAX((Submissions!$A$5:$A$204={c}4)*Submissions!$B$5:$B$204))))')
+            cm[f'{c}5'] = (f'=IF({c}4="","",IF(COUNTIF(Submissions!$A$5:$A$304,{c}4)=0,"",'
+                           f'SUMPRODUCT(MAX((Submissions!$A$5:$A$304={c}4)*Submissions!$B$5:$B$304))))')
 
 
 def ensure_ai_columns(wb):

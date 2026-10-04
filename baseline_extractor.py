@@ -67,8 +67,11 @@ def to_text(name, data):
     return data.decode('utf-8', 'ignore')
 
 
-def _prompt_head():
-    return ('Build the compliance baseline from the attached RFQ / technical specification. '
+def _prompt_head(files):
+    names = ', '.join(n for n, _ in files)
+    return ('Build ONE compliance baseline from the attached RFQ / technical specification files: ' + names + '. '
+            'A file may cover one BOQ item (its name often says which: windows, doors, skylight...) or the whole RFQ. '
+            'Number the BOQ items in the order of the files, and group each item\'s technical lines under it. '
             'Return the RFQ number and title if stated.')
 
 
@@ -96,14 +99,22 @@ def normalise(raw):
 
 
 # ---------- API backend ----------
-def extract_api(client, name, data, model=extractor.MODEL, retries=2):
-    text = to_text(name, data)
-    if text is None:
-        content = [{'type': 'document', 'source': {'type': 'base64', 'media_type': 'application/pdf',
-                                                   'data': base64.standard_b64encode(data).decode()}}]
-    else:
-        content = [{'type': 'text', 'text': f'<rfq_document name="{name}">\n{text[:150000]}\n</rfq_document>'}]
-    content.append({'type': 'text', 'text': _prompt_head()})
+def _blocks(files):
+    """Content blocks for the API: a label then the document, per file."""
+    out = []
+    for name, data in files:
+        text = to_text(name, data)
+        out.append({'type': 'text', 'text': f'File: {name}'})
+        if text is None:
+            out.append({'type': 'document', 'source': {'type': 'base64', 'media_type': 'application/pdf',
+                                                       'data': base64.standard_b64encode(data).decode()}})
+        else:
+            out.append({'type': 'text', 'text': f'<rfq_document name="{name}">\n{text[:100000]}\n</rfq_document>'})
+    return out
+
+
+def extract_api(client, files, model=extractor.MODEL, retries=2):
+    content = _blocks(files) + [{'type': 'text', 'text': _prompt_head(files)}]
     req = dict(model=model, max_tokens=8000, system=SYSTEM, tools=[build_tool()],
                tool_choice={'type': 'tool', 'name': 'record_baseline'},
                messages=[{'role': 'user', 'content': content}])
@@ -121,18 +132,21 @@ def extract_api(client, name, data, model=extractor.MODEL, retries=2):
 
 
 # ---------- Claude Code backend ----------
-def extract_cli(name, data, retries=1, timeout=900):
+def extract_cli(files, retries=1, timeout=900):
     exe = shutil.which('claude')
     if not exe:
         raise RuntimeError('Claude Code is not installed or not on PATH.')
     workdir = tempfile.mkdtemp(prefix='rfq_b_')
-    text = to_text(name, data)
-    fname = 'rfq.pdf' if text is None else 'rfq.txt'
-    with open(os.path.join(workdir, fname), 'wb') as fh:
-        fh.write(data if text is None else text.encode('utf-8'))
+    saved = []
+    for i, (name, data) in enumerate(files, 1):
+        text = to_text(name, data)
+        fname = f'spec_{i}.pdf' if text is None else f'spec_{i}.txt'
+        with open(os.path.join(workdir, fname), 'wb') as fh:
+            fh.write(data if text is None else text.encode('utf-8'))
+        saved.append(f'{fname} (original name: {name})')
     prompt = (SYSTEM.replace('Return everything through the record_baseline tool.', 'Respond with the structured JSON only.')
-              + f'\n\n{_prompt_head()}\nThe document is the file {fname} in the current folder. '
-              'Use the Read tool to open it and read every page, including scanned pages.')
+              + f'\n\n{_prompt_head(files)}\nThe files are in the current folder: ' + '; '.join(saved) +
+              '. Use the Read tool to open each one and read every page, including scanned pages.')
     cmd = [exe, '-p', prompt, '--output-format', 'json', '--json-schema', json.dumps(build_tool()['input_schema']),
            '--allowedTools', 'Read']
     for attempt in range(retries + 1):
@@ -152,17 +166,6 @@ def extract_cli(name, data, retries=1, timeout=900):
             time.sleep(3)
 
 
-def extract_baseline(name, data, backend, api_key=None):
-    """Returns (rfq_id, title, boq_rows, line_rows)."""
-    if backend == 'gemini':
-        return extract_gemini(api_key, name, data)
-    if backend == 'api':
-        import anthropic
-        client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
-        return extract_api(client, name, data)
-    return extract_cli(name, data)
-
-
 # ---------- Google Gemini backend ----------
 _SHAPE = ('Return ONE JSON object only, no markdown: {"rfq_id": str|null, "title": str|null, '
           '"boq": [{"item": int, "description": str, "unit": str, "qty": number|null}], '
@@ -171,12 +174,27 @@ _SHAPE = ('Return ONE JSON object only, no markdown: {"rfq_id": str|null, "title
           '"fail": "RED"|"YELLOW", "notes": str}]}')
 
 
-def extract_gemini(api_key, name, data, call=None):
+def extract_gemini(api_key, files, call=None):
     call = call or extractor.gemini_json
-    text = to_text(name, data)
     system = SYSTEM.replace('Return everything through the record_baseline tool.', _SHAPE)
-    if text is None:
-        raw = call(api_key, system, _prompt_head(), data)
-    else:
-        raw = call(api_key, system, f'<rfq_document name="{name}">\n{text[:150000]}\n</rfq_document>\n{_prompt_head()}')
+    pdfs, texts = [], []
+    for name, data in files:
+        t = to_text(name, data)
+        if t is None:
+            pdfs.append(data)
+            texts.append(f'(PDF file: {name})')
+        else:
+            texts.append(f'<rfq_document name="{name}">\n{t[:100000]}\n</rfq_document>')
+    raw = call(api_key, system, '\n'.join(texts) + '\n' + _prompt_head(files), pdfs or None)
     return normalise(raw)
+
+
+def extract_baseline(files, backend, api_key=None):
+    """files: list of (name, bytes). Returns (rfq_id, title, boq_rows, line_rows)."""
+    if backend == 'gemini':
+        return extract_gemini(api_key, files)
+    if backend == 'api':
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
+        return extract_api(client, files)
+    return extract_cli(files)
