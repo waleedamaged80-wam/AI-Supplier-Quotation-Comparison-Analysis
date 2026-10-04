@@ -1,0 +1,55 @@
+{
+  "rfq": "P01113",
+  "note": "Page ranges (1-based) of each quotation inside the Diyar 33 binder PDF.",
+  "quotations": [
+    {
+      "supplier": "Tilal Al-Eamar",
+      "pages": [
+        8,
+        8
+      ]
+    },
+    {
+      "supplier": "Lamset Ebdaa",
+      "pages": [
+        9,
+        9
+      ]
+    },
+    {
+      "supplier": "Falcon",
+      "pages": [
+        12,
+        12
+      ]
+    },
+    {
+      "supplier": "Mishkal",
+      "pages": [
+        13,
+        14
+      ]
+    },
+    {
+      "supplier": "Qimam",
+      "pages": [
+        10,
+        11
+      ]
+    },
+    {
+      "supplier": "Al Shareef",
+      "pages": [
+        15,
+        16
+      ]
+    },
+    {
+      "supplier": "Ultra Frame",
+      "pages": [
+        17,
+        17
+      ]
+    }
+  ]
+}

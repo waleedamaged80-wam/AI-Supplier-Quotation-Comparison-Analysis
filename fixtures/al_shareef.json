@@ -1,0 +1,242 @@
+{
+ "supplier": "Al Shareef",
+ "supplier_name_in_doc": "Al Shareef",
+ "quotation_date": null,
+ "pages": [
+  15,
+  16
+ ],
+ "model": "fixture",
+ "rates": [
+  {
+   "item": 1,
+   "rate": 516
+  },
+  {
+   "item": 2,
+   "rate": 589
+  },
+  {
+   "item": 3,
+   "rate": null
+  }
+ ],
+ "lines": [
+  {
+   "line": 1,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "Priced on own BOQ, not RFQ quantities"
+  },
+  {
+   "line": 2,
+   "value": "Yes",
+   "declaration": "Partially Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "Hinged window priced; no door item"
+  },
+  {
+   "line": 3,
+   "value": "No",
+   "declaration": "Non-Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "No skylight; curtain wall rate in own BOQ"
+  },
+  {
+   "line": 4,
+   "value": "2026-10-11",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "14 days from 27-Sep"
+  },
+  {
+   "line": 5,
+   "value": "2026-09-27",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 6,
+   "value": "Ex-VAT",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 7,
+   "value": "Equivalent",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "LAFAL or equivalent"
+  },
+  {
+   "line": 8,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 9,
+   "value": "EPDM",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": "Generic EPDM"
+  },
+  {
+   "line": 10,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 11,
+   "value": 12,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 12,
+   "value": 1.5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 13,
+   "value": 24,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 14,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 15,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 16,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 17,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 18,
+   "value": 1.5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 19,
+   "value": 24,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 20,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 21,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 22,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 23,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 24,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 15,
+   "source_text": "",
+   "note": ""
+  }
+ ]
+}

@@ -1,0 +1,242 @@
+{
+ "supplier": "Qimam",
+ "supplier_name_in_doc": "Qimam",
+ "quotation_date": null,
+ "pages": [
+  10,
+  11
+ ],
+ "model": "fixture",
+ "rates": [
+  {
+   "item": 1,
+   "rate": 400
+  },
+  {
+   "item": 2,
+   "rate": 580
+  },
+  {
+   "item": 3,
+   "rate": 700
+  }
+ ],
+ "lines": [
+  {
+   "line": 1,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 2,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 3,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 4,
+   "value": "2026-09-27",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "One week from 20-Sep"
+  },
+  {
+   "line": 5,
+   "value": "2026-09-20",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 6,
+   "value": "Ex-VAT",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 7,
+   "value": "Italian",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 8,
+   "value": "Wacker GP",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 9,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 10,
+   "value": 50,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "50% at signing; 25/20/5 after"
+  },
+  {
+   "line": 11,
+   "value": 12,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 12,
+   "value": 1.5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 13,
+   "value": 24,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 14,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 15,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 16,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 17,
+   "value": 5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "From final handover; excludes misuse"
+  },
+  {
+   "line": 18,
+   "value": 1.8,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 19,
+   "value": 24,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 20,
+   "value": 3,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 21,
+   "value": 29.3,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "6+16+1.3 laminated+6"
+  },
+  {
+   "line": 22,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 23,
+   "value": "Wacker GP",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "Structural grade to confirm"
+  },
+  {
+   "line": 24,
+   "value": 5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 10,
+   "source_text": "",
+   "note": "Single 5-year warranty for all works"
+  }
+ ]
+}

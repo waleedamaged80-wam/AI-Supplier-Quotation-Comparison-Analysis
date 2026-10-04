@@ -1,0 +1,242 @@
+{
+ "supplier": "Ultra Frame",
+ "supplier_name_in_doc": "Ultra Frame",
+ "quotation_date": null,
+ "pages": [
+  17,
+  17
+ ],
+ "model": "fixture",
+ "rates": [
+  {
+   "item": 1,
+   "rate": 480
+  },
+  {
+   "item": 2,
+   "rate": 700
+  },
+  {
+   "item": 3,
+   "rate": 750
+  }
+ ],
+ "lines": [
+  {
+   "line": 1,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 2,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": "Quoted 27 m2 vs RFQ 23 m2"
+  },
+  {
+   "line": 3,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 4,
+   "value": "2026-10-21",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 5,
+   "value": "2026-09-21",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 6,
+   "value": "Ex-VAT",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 7,
+   "value": "Italian",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 8,
+   "value": "German silicone",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": "Wacker GP not named"
+  },
+  {
+   "line": 9,
+   "value": "EPDM",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": "Skylight only"
+  },
+  {
+   "line": 10,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 11,
+   "value": 12,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 12,
+   "value": 1.5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 13,
+   "value": 24,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 14,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 15,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 16,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 17,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 18,
+   "value": 1.5,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 19,
+   "value": 28,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": "Stated 24 mm; 6+16+6 sums to 28"
+  },
+  {
+   "line": 20,
+   "value": 3,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 21,
+   "value": 28,
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 22,
+   "value": "Yes",
+   "declaration": "Fully Compliant",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  },
+  {
+   "line": 23,
+   "value": "WN silicone",
+   "declaration": "Alternative Offer",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": "DC 995 or equivalent required"
+  },
+  {
+   "line": 24,
+   "value": null,
+   "declaration": "Not Stated",
+   "confidence": 0.95,
+   "source_page": 17,
+   "source_text": "",
+   "note": ""
+  }
+ ]
+}

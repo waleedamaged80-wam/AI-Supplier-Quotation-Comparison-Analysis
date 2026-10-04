@@ -1,0 +1,5 @@
+anthropic>=0.40
+openpyxl>=3.1
+pypdf>=4.0
+streamlit>=1.40
+pandas>=2.0
